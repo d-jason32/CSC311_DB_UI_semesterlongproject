@@ -21,11 +21,12 @@ import javafx.stage.Stage;
 import model.Person;
 import service.MyLogger;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 public class DB_GUI_Controller implements Initializable {
 
@@ -72,6 +73,19 @@ public class DB_GUI_Controller implements Initializable {
             data.add(p);
             clearForm();
             statusBox.setText("Added Record!");
+
+    }
+
+    protected void addNewRecord(String firstName, String lastName, String department, String major, String email) {
+
+        Person p = new Person(firstName, lastName, department,
+                major, email, "");
+        cnUtil.insertUser(p);
+        cnUtil.retrieveId(p);
+        p.setId(cnUtil.retrieveId(p));
+        data.add(p);
+        clearForm();
+        statusBox.setText("Added Record!");
 
     }
 
@@ -237,4 +251,46 @@ public class DB_GUI_Controller implements Initializable {
         }
     }
 
+
+
+    @FXML
+    void importCSVButton(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
+        );
+
+        File file = fileChooser.showOpenDialog(img_view.getScene().getWindow());
+        if (file != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+
+                String firstName;
+                String lastName;
+                String department;
+                String major;
+                String email;
+                while ((line = br.readLine()) != null) {
+                    String[] section = line.split(",");
+
+                    firstName = section[0].trim();
+                    lastName = section[1].trim();
+                    department = section[2].trim();
+                    major = section[3].trim();
+                    email = section[4].trim();
+
+                    addNewRecord(firstName, lastName, department, major, email);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        statusBox.setText("Added CSV!");
+    }
+
+
+    @FXML
+    void exportCSVButton(ActionEvent event) {
+        data.forEach(e -> System.out.println(e));
+    }
 }
