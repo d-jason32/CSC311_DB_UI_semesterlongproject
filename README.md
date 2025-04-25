@@ -1,7 +1,25 @@
 <h1 align="center">Module 07 Assignment</h1>
 
-## 🚀 Features
-- 
+## 🚀 Features and Touch-Ups
+- "Edit" and "delete" disabled unless a record is selected
+- "Add" enabled only if form is correct
+- Menu item's can be greyed out
+- Field validation using regex
+- "Major" field has a dropdown menu 
+- User feedback status bar
+- Import and Export CSV
+- Thread Safety in UserSession Class
+- Signup page functionality
+- Record username and password
+- Touch ups: 
+  - App Branding (Farmingdale Registrar Office)
+  - Adding a Menu Page to go to various menus 
+  - Integration with Chat-GPT to give a summary of the observable list
+  - Support Page
+- Bonus
+  - PDF generation of a report
+  - Row management: add a new row by clicking on the next empty row
+  - Allow editing within the selected table view row 
 
 ## 🧰 Tech Stack and Libraries
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
