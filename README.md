@@ -1,6 +1,6 @@
 <h1 align="center">Module 07 Assignment</h1>
 
-## 🚀 4 Touch Up Features
+## 🚀 Features
 - 
 
 ## 🧰 Tech Stack and Libraries

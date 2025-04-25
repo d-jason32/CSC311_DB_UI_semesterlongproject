@@ -30,6 +30,8 @@ import java.util.ResourceBundle;
 public class DB_GUI_Controller implements Initializable {
 
     @FXML
+    private TextField statusBox;
+    @FXML
     TextField first_name, last_name, department, major, email, imageURL;
     @FXML
     ImageView img_view;
@@ -69,6 +71,7 @@ public class DB_GUI_Controller implements Initializable {
             p.setId(cnUtil.retrieveId(p));
             data.add(p);
             clearForm();
+            statusBox.setText("Added Record!");
 
     }
 
@@ -80,6 +83,7 @@ public class DB_GUI_Controller implements Initializable {
         major.setText("");
         email.setText("");
         imageURL.setText("");
+        statusBox.setText("Cleared form!");
     }
 
     @FXML
@@ -124,6 +128,9 @@ public class DB_GUI_Controller implements Initializable {
         data.remove(p);
         data.add(index, p2);
         tv.getSelectionModel().select(index);
+        statusBox.setText("Edited Record!");
+
+
     }
 
     @FXML
@@ -133,6 +140,7 @@ public class DB_GUI_Controller implements Initializable {
         cnUtil.deleteRecord(p);
         data.remove(index);
         tv.getSelectionModel().select(index);
+        statusBox.setText("Deleted Record!");
     }
 
     @FXML
