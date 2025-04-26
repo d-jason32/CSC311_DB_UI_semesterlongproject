@@ -1,5 +1,7 @@
 <h1 align="center">Module 07 Assignment</h1>
 
+![img_1.png](img_1.png)
+
 ## 🚀 Features and Touch-Ups
 - "Edit" and "delete" disabled unless a record is selected
 - "Add" enabled only if form is correct

@@ -9,6 +9,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -72,6 +73,7 @@
                                 </ImageView>
                             </children>
                         </AnchorPane>
+                  <TextArea fx:id="chatGPTArea" prefHeight="479.0" prefWidth="132.0" promptText="ChatGPT." />
                     </children>
                 </VBox>
             </left>
@@ -139,6 +141,11 @@
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                             </VBox.margin>
                         </Button>
+                  <Button fx:id="chatGPTButton" mnemonicParsing="false" onAction="#runChatGPT" styleClass="db_btn" text="ChatGPT">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Button>
                     </children>
                 </VBox>
          </right>

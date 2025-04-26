@@ -4,7 +4,8 @@ module com.example.csc311_db_ui_semesterlongproject {
     requires java.sql;
     requires java.prefs;
     requires simple.openai;
-
+    requires java.net.http;
+    requires org.slf4j.simple;
 
     opens viewmodel;
     exports viewmodel;

@@ -37,6 +37,8 @@ import java.util.regex.Pattern;
 
 public class DB_GUI_Controller implements Initializable {
     @FXML
+    private TextArea chatGPTArea;
+    @FXML
     private TextField statusBox;
     @FXML
     TextField first_name, last_name, department, email, imageURL;
@@ -415,10 +417,10 @@ public class DB_GUI_Controller implements Initializable {
 
     public void chatGPT(){
         // The message sent to the OpenAI API model.
-        String messageToChatbot = "Summarize this table" + tv.toString();
+        String messageToChatbot = "Summarize this table" + data.toString();
 
         System.out.println(messageToChatbot);
-        String apiKey = System.getenv("OPENAI_API_KEY");
+        String apiKey = "";
 
         var openAI = SimpleOpenAI.builder()
                 .apiKey(apiKey)
@@ -426,7 +428,7 @@ public class DB_GUI_Controller implements Initializable {
 
         var chatRequest = ChatRequest.builder()
                 .model("gpt-4o")
-                .message(ChatMessage.SystemMessage.of(""))
+                .message(ChatMessage.SystemMessage.of("Please check your answer."))
                 .message(ChatMessage.UserMessage.of(messageToChatbot))
                 .temperature(0.0)
                 .maxCompletionTokens(300)
@@ -435,6 +437,11 @@ public class DB_GUI_Controller implements Initializable {
         var futureChat = openAI.chatCompletions().create(chatRequest);
         var chatResponse = futureChat.join();
 
-        System.out.println(chatResponse.firstContent());
+        chatGPTArea.setText(chatResponse.firstContent());
+    }
+
+    @FXML
+    void runChatGPT(ActionEvent event) {
+        chatGPT();
     }
 }
