@@ -27,15 +27,17 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class DB_GUI_Controller implements Initializable {
-
     @FXML
     private TextField statusBox;
     @FXML
-    TextField first_name, last_name, department, major, email, imageURL;
+    TextField first_name, last_name, department, email, imageURL;
     @FXML
     ImageView img_view;
+    @FXML
+    private ComboBox<Major> comboBox;
     @FXML
     MenuBar menuBar;
     @FXML
@@ -46,6 +48,15 @@ public class DB_GUI_Controller implements Initializable {
     private TableColumn<Person, String> tv_fn, tv_ln, tv_department, tv_major, tv_email;
     private final DbConnectivityClass cnUtil = new DbConnectivityClass();
     private final ObservableList<Person> data = cnUtil.getData();
+
+    Pattern firstNamePattern = Pattern.compile("^[a-zA-Z]{2,25}$");
+    Pattern lastNamePattern = Pattern.compile("^[a-zA-Z]{2,25}$");
+    Pattern departmentPattern = Pattern.compile("^[a-zA-Z]{2,25}$");
+    Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9._%+-]{1,25}@farmingdale\\.edu$");
+
+    boolean firstNameBool, lastNameBool, departmentBool, emailBool = false;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -60,13 +71,64 @@ public class DB_GUI_Controller implements Initializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        comboBox.getItems().addAll(Major.values());
+        TextField[] fields = { first_name, last_name, department, email};
+
+        /*
+        After each text field is clicked on, every
+        field will be checked if it is correct.
+         */
+        for (TextField field : fields) {
+            field.setOnMouseClicked(e -> {
+                checkIfCorrect();
+            });
+        }
     }
+
+    /**
+     * Checks if every text field is valid and changes their emoji from x to a checkmark.
+     */
+    void checkIfCorrect(){
+        if (firstNamePattern.matcher(first_name.getText()).matches()){
+            first_name.setStyle("-fx-border-color:#6dff7c; -fx-border-width:2px;");
+            firstNameBool = true;
+        }
+        else {
+            first_name.setStyle("-fx-border-color:red; -fx-border-width:2px;");
+            firstNameBool = false;
+        }
+        if (lastNamePattern.matcher(last_name.getText()).matches()){
+            last_name.setStyle("-fx-border-color:#6dff7c; -fx-border-width:2px;");
+            lastNameBool = true;
+        }
+        else {
+            last_name.setStyle("-fx-border-color:red; -fx-border-width:2px;");
+            lastNameBool = false;
+        }
+        if (departmentPattern.matcher(department.getText()).matches()){
+            department.setStyle("-fx-border-color:#6dff7c; -fx-border-width:2px;");
+            departmentBool = true;
+        }
+        else {
+            department.setStyle("-fx-border-color:red; -fx-border-width:2px;");
+            departmentBool = false;
+        }
+        if (emailPattern.matcher(email.getText()).matches()){
+            email.setStyle("-fx-border-color:#6dff7c; -fx-border-width:2px;");
+            emailBool = true;
+        }
+        else {
+            email.setStyle("-fx-border-color:red; -fx-border-width:2px;");
+            emailBool = false;
+        }
+    }
+
 
     @FXML
     protected void addNewRecord() {
 
             Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
-                    major.getText(), email.getText(), imageURL.getText());
+                    comboBox.getValue().toString(), email.getText(), imageURL.getText());
             cnUtil.insertUser(p);
             cnUtil.retrieveId(p);
             p.setId(cnUtil.retrieveId(p));
@@ -94,7 +156,7 @@ public class DB_GUI_Controller implements Initializable {
         first_name.setText("");
         last_name.setText("");
         department.setText("");
-        major.setText("");
+        comboBox.setValue(null);
         email.setText("");
         imageURL.setText("");
         statusBox.setText("Cleared form!");
@@ -137,7 +199,7 @@ public class DB_GUI_Controller implements Initializable {
         Person p = tv.getSelectionModel().getSelectedItem();
         int index = data.indexOf(p);
         Person p2 = new Person(index + 1, first_name.getText(), last_name.getText(), department.getText(),
-                major.getText(), email.getText(),  imageURL.getText());
+                comboBox.getValue().toString(), email.getText(),  imageURL.getText());
         cnUtil.editUser(p.getId(), p2);
         data.remove(p);
         data.add(index, p2);
@@ -173,12 +235,16 @@ public class DB_GUI_Controller implements Initializable {
     @FXML
     protected void selectedItemTV(MouseEvent mouseEvent) {
         Person p = tv.getSelectionModel().getSelectedItem();
-        first_name.setText(p.getFirstName());
-        last_name.setText(p.getLastName());
-        department.setText(p.getDepartment());
-        major.setText(p.getMajor());
-        email.setText(p.getEmail());
-        imageURL.setText(p.getImageURL());
+
+        if (p != null){
+            first_name.setText(p.getFirstName());
+            last_name.setText(p.getLastName());
+            department.setText(p.getDepartment());
+            comboBox.setValue(Major.valueOf(p.getMajor()));
+            email.setText(p.getEmail());
+            imageURL.setText(p.getImageURL());
+        }
+
     }
 
     public void lightTheme(ActionEvent actionEvent) {
