@@ -2,6 +2,9 @@ package viewmodel;
 
 import dao.DbConnectivityClass;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +23,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Person;
 import service.MyLogger;
+import io.github.sashirestela.openai.SimpleOpenAI;
+import io.github.sashirestela.openai.domain.chat.ChatMessage;
+import io.github.sashirestela.openai.domain.chat.ChatRequest;
 
 import java.io.*;
 import java.net.URL;
@@ -55,7 +61,16 @@ public class DB_GUI_Controller implements Initializable {
     Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9._%+-]{1,25}@farmingdale\\.edu$");
 
     boolean firstNameBool, lastNameBool, departmentBool, emailBool = false;
+    boolean canAdd = false;
 
+    @FXML
+    private Button editButton;
+
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button addBtn;
 
 
     @Override
@@ -81,12 +96,40 @@ public class DB_GUI_Controller implements Initializable {
         for (TextField field : fields) {
             field.setOnMouseClicked(e -> {
                 checkIfCorrect();
+                setAddButton();
             });
+        }
+        // Disables the edit button unless the table view is clicked on.
+        editButton.disableProperty().bind(
+                tv.getSelectionModel().selectedItemProperty().isNull());
+
+        // Disables the delete button unless the table view is clicked on.
+        deleteButton.disableProperty().bind(
+                tv.getSelectionModel().selectedItemProperty().isNull());
+
+    }
+
+    /**
+     * If every field is valid, the canAdd is set to true.
+     * If not, it is set to false.
+     */
+    void setAddButton(){
+        if (firstNameBool == true
+                && lastNameBool == true
+                && departmentBool == true
+                && emailBool == true){
+            canAdd = true;
+            addBtn.setStyle("-fx-background-color:#6dff7c; -fx-border-width:2px;");
+        }
+        else {
+            canAdd = false;
+            addBtn.setStyle("-fx-background-color:red; -fx-border-width:2px;");
+            statusBox.setText("Fill in missing info!");
         }
     }
 
     /**
-     * Checks if every text field is valid and changes their emoji from x to a checkmark.
+     * Checks if every text field is valid.
      */
     void checkIfCorrect(){
         if (firstNamePattern.matcher(first_name.getText()).matches()){
@@ -126,7 +169,7 @@ public class DB_GUI_Controller implements Initializable {
 
     @FXML
     protected void addNewRecord() {
-
+        if (canAdd){
             Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
                     comboBox.getValue().toString(), email.getText(), imageURL.getText());
             cnUtil.insertUser(p);
@@ -135,6 +178,8 @@ public class DB_GUI_Controller implements Initializable {
             data.add(p);
             clearForm();
             statusBox.setText("Added Record!");
+        }
+
 
     }
 
@@ -346,6 +391,14 @@ public class DB_GUI_Controller implements Initializable {
                     email = section[4].trim();
 
                     addNewRecord(firstName, lastName, department, major, email);
+                    Person p = new Person(firstName, lastName, department,
+                            major, email, " ");
+                    cnUtil.insertUser(p);
+                    cnUtil.retrieveId(p);
+                    p.setId(cnUtil.retrieveId(p));
+                    data.add(p);
+                    clearForm();
+                    statusBox.setText("Added Record!");
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -358,5 +411,30 @@ public class DB_GUI_Controller implements Initializable {
     @FXML
     void exportCSVButton(ActionEvent event) {
         data.forEach(e -> System.out.println(e));
+    }
+
+    public void chatGPT(){
+        // The message sent to the OpenAI API model.
+        String messageToChatbot = "Summarize this table" + tv.toString();
+
+        System.out.println(messageToChatbot);
+        String apiKey = System.getenv("OPENAI_API_KEY");
+
+        var openAI = SimpleOpenAI.builder()
+                .apiKey(apiKey)
+                .build();
+
+        var chatRequest = ChatRequest.builder()
+                .model("gpt-4o")
+                .message(ChatMessage.SystemMessage.of(""))
+                .message(ChatMessage.UserMessage.of(messageToChatbot))
+                .temperature(0.0)
+                .maxCompletionTokens(300)
+                .build();
+
+        var futureChat = openAI.chatCompletions().create(chatRequest);
+        var chatResponse = futureChat.join();
+
+        System.out.println(chatResponse.firstContent());
     }
 }

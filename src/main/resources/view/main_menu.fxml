@@ -27,10 +27,13 @@
         </VBox>
     </center>
    <top>
-      <ImageView fitHeight="350.0" fitWidth="335.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+      <ImageView fitHeight="310.0" fitWidth="578.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
          <image>
-            <Image url="@../images/image.png" />
+            <Image url="@../images/registar.png" />
          </image>
+         <BorderPane.margin>
+            <Insets top="40.0" />
+         </BorderPane.margin>
       </ImageView>
    </top>
 </BorderPane>
