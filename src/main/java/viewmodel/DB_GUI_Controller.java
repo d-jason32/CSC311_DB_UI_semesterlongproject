@@ -2,9 +2,6 @@ package viewmodel;
 
 import dao.DbConnectivityClass;
 import javafx.application.Platform;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,6 +24,12 @@ import service.MyLogger;
 import io.github.sashirestela.openai.SimpleOpenAI;
 import io.github.sashirestela.openai.domain.chat.ChatMessage;
 import io.github.sashirestela.openai.domain.chat.ChatRequest;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.opencsv.CSVWriter;
+import java.nio.file.*;
 
 import java.io.*;
 import java.net.URL;
@@ -65,6 +68,7 @@ public class DB_GUI_Controller implements Initializable {
 
     boolean firstNameBool, lastNameBool, departmentBool, emailBool = false;
     boolean canAdd = false;
+    String report;
 
     @FXML
     private Button editButton;
@@ -412,8 +416,8 @@ public class DB_GUI_Controller implements Initializable {
 
 
     @FXML
-    void exportCSVButton(ActionEvent event) {
-        data.forEach(e -> System.out.println(e));
+    void exportCSVButton(ActionEvent event) throws IOException {
+
     }
 
     public void chatGPT(){
@@ -437,7 +441,7 @@ public class DB_GUI_Controller implements Initializable {
 
         var futureChat = openAI.chatCompletions().create(chatRequest);
         var chatResponse = futureChat.join();
-
+        report = chatResponse.firstContent();
         chatGPTArea.setText(chatResponse.firstContent());
     }
 
@@ -457,6 +461,21 @@ public class DB_GUI_Controller implements Initializable {
             window.show();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Uses itext7 api to generate a pdf file into the root directory.
+     * @param event
+     * @throws IOException
+     */
+    @FXML
+    void pdfGeneration(ActionEvent event) throws IOException {
+        try (PdfWriter w = new PdfWriter("generated_file.pdf");
+             PdfDocument pdf = new PdfDocument(w);
+             Document doc = new Document(pdf)) {
+            chatGPT();
+            doc.add(new Paragraph(report));
         }
     }
 

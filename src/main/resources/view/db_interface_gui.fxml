@@ -58,6 +58,11 @@
                         <MenuItem mnemonicParsing="false" onAction="#exportCSVButton" text="Export CSV" />
                     </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="PDF">
+                     <items>
+                        <MenuItem fx:id="pdfButton" mnemonicParsing="false" onAction="#pdfGeneration" text="Generate PDF" />
+                     </items>
+                  </Menu>
                     </menus>
                 </MenuBar>
             </top>

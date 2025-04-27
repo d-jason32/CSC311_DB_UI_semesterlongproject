@@ -6,6 +6,9 @@ module com.example.csc311_db_ui_semesterlongproject {
     requires simple.openai;
     requires java.net.http;
     requires org.slf4j.simple;
+    requires layout;
+    requires kernel;
+    requires com.opencsv;
 
     opens viewmodel;
     exports viewmodel;

@@ -9,10 +9,8 @@
 - Field validation using regex
 - "Major" field has a dropdown menu 
 - User feedback status bar
-- Import and Export CSV
+- Import and CSV File
 - Thread Safety in UserSession Class
-- Signup page functionality
-- Record username and password
 - Touch ups: 
   - App Branding (Farmingdale Registrar Office)
   - Adding a Menu Page to go to various menus 
@@ -20,8 +18,6 @@
   - Support Page
 - Bonus
   - PDF generation of a report
-  - Row management: add a new row by clicking on the next empty row
-  - Allow editing within the selected table view row 
 
 ## 🧰 Tech Stack and Libraries
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
